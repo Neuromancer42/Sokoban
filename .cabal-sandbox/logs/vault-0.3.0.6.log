@@ -1,0 +1,30 @@
+cabal: Entering directory '/tmp/cabal-tmp-32101/vault-0.3.0.6'
+Configuring vault-0.3.0.6...
+Building vault-0.3.0.6...
+Preprocessing library vault-0.3.0.6...
+[1 of 5] Compiling Data.Unique.Really ( src/Data/Unique/Really.hs, dist/dist-sandbox-313a269c/build/Data/Unique/Really.o )
+
+src/Data/Unique/Really.hs:6:1: warning: [-Wunused-imports]
+    The import of ‘Control.Applicative’ is redundant
+      except perhaps to import instances from ‘Control.Applicative’
+    To import instances alone, use: import Control.Applicative()
+[2 of 5] Compiling Data.Vault.ST.Lazy ( src/Data/Vault/ST/Lazy.hs, dist/dist-sandbox-313a269c/build/Data/Vault/ST/Lazy.o )
+
+src/Data/Vault/ST/ST.hs:17:1: warning: [-Wunused-imports]
+    The import of ‘Control.Applicative’ is redundant
+      except perhaps to import instances from ‘Control.Applicative’
+    To import instances alone, use: import Control.Applicative()
+[3 of 5] Compiling Data.Vault.Lazy  ( src/Data/Vault/Lazy.hs, dist/dist-sandbox-313a269c/build/Data/Vault/Lazy.o )
+[4 of 5] Compiling Data.Vault.ST.Strict ( src/Data/Vault/ST/Strict.hs, dist/dist-sandbox-313a269c/build/Data/Vault/ST/Strict.o )
+
+src/Data/Vault/ST/ST.hs:17:1: warning: [-Wunused-imports]
+    The import of ‘Control.Applicative’ is redundant
+      except perhaps to import instances from ‘Control.Applicative’
+    To import instances alone, use: import Control.Applicative()
+[5 of 5] Compiling Data.Vault.Strict ( src/Data/Vault/Strict.hs, dist/dist-sandbox-313a269c/build/Data/Vault/Strict.o )
+Creating package registration file:
+/tmp/pkgConf-vault-0.3.01600515282040332871.6
+Installing library in
+/home/neuromancer/Projects/Sokoban/.cabal-sandbox/lib/x86_64-linux-ghc-8.0.2/vault-0.3.0.6-APWt77occ3yJwqy7L16f4k
+Registering vault-0.3.0.6...
+cabal: Leaving directory '/tmp/cabal-tmp-32101/vault-0.3.0.6'

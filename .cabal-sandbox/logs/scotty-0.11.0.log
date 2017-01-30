@@ -1,0 +1,16 @@
+cabal: Entering directory '/tmp/cabal-tmp-32073/scotty-0.11.0'
+Configuring scotty-0.11.0...
+Building scotty-0.11.0...
+Preprocessing library scotty-0.11.0...
+[1 of 6] Compiling Web.Scotty.Internal.Types ( Web/Scotty/Internal/Types.hs, dist/dist-sandbox-313a269c/build/Web/Scotty/Internal/Types.o )
+[2 of 6] Compiling Web.Scotty.Util  ( Web/Scotty/Util.hs, dist/dist-sandbox-313a269c/build/Web/Scotty/Util.o )
+[3 of 6] Compiling Web.Scotty.Action ( Web/Scotty/Action.hs, dist/dist-sandbox-313a269c/build/Web/Scotty/Action.o )
+[4 of 6] Compiling Web.Scotty.Route ( Web/Scotty/Route.hs, dist/dist-sandbox-313a269c/build/Web/Scotty/Route.o )
+[5 of 6] Compiling Web.Scotty.Trans ( Web/Scotty/Trans.hs, dist/dist-sandbox-313a269c/build/Web/Scotty/Trans.o )
+[6 of 6] Compiling Web.Scotty       ( Web/Scotty.hs, dist/dist-sandbox-313a269c/build/Web/Scotty.o )
+Creating package registration file:
+/tmp/pkgConf-scotty-0.117407593551285228804.0
+Installing library in
+/home/neuromancer/Projects/Sokoban/.cabal-sandbox/lib/x86_64-linux-ghc-8.0.2/scotty-0.11.0-FbV8yv6ShjlC6GewhTkR3S
+Registering scotty-0.11.0...
+cabal: Leaving directory '/tmp/cabal-tmp-32073/scotty-0.11.0'

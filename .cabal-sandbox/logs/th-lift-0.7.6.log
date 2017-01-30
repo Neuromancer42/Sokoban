@@ -1,0 +1,15 @@
+cabal: Entering directory '/tmp/cabal-tmp-32096/th-lift-0.7.6'
+Configuring th-lift-0.7.6...
+Building th-lift-0.7.6...
+Preprocessing library th-lift-0.7.6...
+[1 of 1] Compiling Language.Haskell.TH.Lift ( src/Language/Haskell/TH/Lift.hs, dist/dist-sandbox-313a269c/build/Language/Haskell/TH/Lift.o )
+
+src/Language/Haskell/TH/Lift.hs:247:15: warning: [-Wname-shadowing]
+    This binding for ‘nameSpace’ shadows the existing binding
+      imported from ‘Language.Haskell.TH.Syntax’ at src/Language/Haskell/TH/Lift.hs:38:1-33
+Creating package registration file:
+/tmp/pkgConf-th-lift-0.71376710097927612902.6
+Installing library in
+/home/neuromancer/Projects/Sokoban/.cabal-sandbox/lib/x86_64-linux-ghc-8.0.2/th-lift-0.7.6-BJcuQtn7dnPzL4YOk4wps
+Registering th-lift-0.7.6...
+cabal: Leaving directory '/tmp/cabal-tmp-32096/th-lift-0.7.6'

@@ -1,0 +1,14 @@
+cabal: Entering directory '/tmp/cabal-tmp-32075/auto-update-0.1.4'
+Configuring auto-update-0.1.4...
+Building auto-update-0.1.4...
+Preprocessing library auto-update-0.1.4...
+[1 of 4] Compiling Control.Debounce ( Control/Debounce.hs, dist/dist-sandbox-313a269c/build/Control/Debounce.o )
+[2 of 4] Compiling Control.AutoUpdate.Util ( Control/AutoUpdate/Util.hs, dist/dist-sandbox-313a269c/build/Control/AutoUpdate/Util.o )
+[3 of 4] Compiling Control.Reaper   ( Control/Reaper.hs, dist/dist-sandbox-313a269c/build/Control/Reaper.o )
+[4 of 4] Compiling Control.AutoUpdate ( Control/AutoUpdate.hs, dist/dist-sandbox-313a269c/build/Control/AutoUpdate.o )
+Creating package registration file:
+/tmp/pkgConf-auto-update-0.1114161612484353895.4
+Installing library in
+/home/neuromancer/Projects/Sokoban/.cabal-sandbox/lib/x86_64-linux-ghc-8.0.2/auto-update-0.1.4-EmUvNdmhEju51bHrtaEMpz
+Registering auto-update-0.1.4...
+cabal: Leaving directory '/tmp/cabal-tmp-32075/auto-update-0.1.4'

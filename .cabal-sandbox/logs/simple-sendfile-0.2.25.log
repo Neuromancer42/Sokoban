@@ -1,0 +1,24 @@
+cabal: Entering directory '/tmp/cabal-tmp-32094/simple-sendfile-0.2.25'
+Configuring simple-sendfile-0.2.25...
+Building simple-sendfile-0.2.25...
+Preprocessing library simple-sendfile-0.2.25...
+[1 of 4] Compiling Network.Sendfile.Types ( Network/Sendfile/Types.hs, dist/dist-sandbox-313a269c/build/Network/Sendfile/Types.o )
+[2 of 4] Compiling Network.Sendfile.Linux ( dist/dist-sandbox-313a269c/build/Network/Sendfile/Linux.hs, dist/dist-sandbox-313a269c/build/Network/Sendfile/Linux.o )
+
+Network/Sendfile/Linux.hsc:12:1: warning: [-Wunused-imports]
+    The import of ‘Control.Applicative’ is redundant
+      except perhaps to import instances from ‘Control.Applicative’
+    To import instances alone, use: import Control.Applicative()
+
+Network/Sendfile/Linux.hsc:17:1: warning: [-Wunused-imports]
+    The import of ‘Data.Int’ is redundant
+      except perhaps to import instances from ‘Data.Int’
+    To import instances alone, use: import Data.Int()
+[3 of 4] Compiling System.Linux.Sendfile ( System/Linux/Sendfile.hs, dist/dist-sandbox-313a269c/build/System/Linux/Sendfile.o )
+[4 of 4] Compiling Network.Sendfile ( Network/Sendfile.hs, dist/dist-sandbox-313a269c/build/Network/Sendfile.o )
+Creating package registration file:
+/tmp/pkgConf-simple-sendfile-0.21036140795463480570.25
+Installing library in
+/home/neuromancer/Projects/Sokoban/.cabal-sandbox/lib/x86_64-linux-ghc-8.0.2/simple-sendfile-0.2.25-FKjaroadeGyAvlozlp0jLe
+Registering simple-sendfile-0.2.25...
+cabal: Leaving directory '/tmp/cabal-tmp-32094/simple-sendfile-0.2.25'

@@ -1,0 +1,20 @@
+cabal: Entering directory '/tmp/cabal-tmp-32073/cookie-0.4.2.1'
+Configuring cookie-0.4.2.1...
+Building cookie-0.4.2.1...
+Preprocessing library cookie-0.4.2.1...
+[1 of 1] Compiling Web.Cookie       ( Web/Cookie.hs, dist/dist-sandbox-313a269c/build/Web/Cookie.o )
+
+Web/Cookie.hs:92:18: warning: [-Wdeprecations]
+    In the use of ‘breakByte’ (imported from Data.ByteString):
+    Deprecated: "It is an internal function and should never have been exported. Use 'break (== x)' instead. (There are rewrite rules that handle this special case of 'break'.)"
+
+Web/Cookie.hs:241:21: warning: [-Wdeprecations]
+    In the use of ‘parseTime’
+    (imported from Data.Time, but defined in time-1.6.0.1:Data.Time.Format.Parse):
+    Deprecated: "use "parseTimeM True" instead"
+Creating package registration file:
+/tmp/pkgConf-cookie-0.4.214099597082077486715.1
+Installing library in
+/home/neuromancer/Projects/Sokoban/.cabal-sandbox/lib/x86_64-linux-ghc-8.0.2/cookie-0.4.2.1-5S4SsfaEOCYIRFYzTCzIva
+Registering cookie-0.4.2.1...
+cabal: Leaving directory '/tmp/cabal-tmp-32073/cookie-0.4.2.1'

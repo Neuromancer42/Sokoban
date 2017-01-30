@@ -1,0 +1,27 @@
+cabal: Entering directory '/tmp/cabal-tmp-32073/blank-canvas-0.6'
+Configuring blank-canvas-0.6...
+Building blank-canvas-0.6...
+Preprocessing library blank-canvas-0.6...
+[ 1 of 17] Compiling Paths_blank_canvas ( dist/dist-sandbox-313a269c/build/autogen/Paths_blank_canvas.hs, dist/dist-sandbox-313a269c/build/Paths_blank_canvas.o )
+[ 2 of 17] Compiling Graphics.Blank.Types ( Graphics/Blank/Types.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Types.o )
+[ 3 of 17] Compiling Graphics.Blank.Parser ( Graphics/Blank/Parser.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Parser.o )
+[ 4 of 17] Compiling Graphics.Blank.JavaScript ( Graphics/Blank/JavaScript.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/JavaScript.o )
+[ 5 of 17] Compiling Graphics.Blank.Types.CSS ( Graphics/Blank/Types/CSS.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Types/CSS.o )
+[ 6 of 17] Compiling Graphics.Blank.Types.Cursor ( Graphics/Blank/Types/Cursor.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Types/Cursor.o )
+[ 7 of 17] Compiling Graphics.Blank.Types.Font ( Graphics/Blank/Types/Font.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Types/Font.o )
+[ 8 of 17] Compiling Graphics.Blank.Events ( Graphics/Blank/Events.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Events.o )
+[ 9 of 17] Compiling Graphics.Blank.DeviceContext ( Graphics/Blank/DeviceContext.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/DeviceContext.o )
+[10 of 17] Compiling Graphics.Blank.Canvas ( Graphics/Blank/Canvas.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Canvas.o )
+[11 of 17] Compiling Graphics.Blank.Cursor ( Graphics/Blank/Cursor.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Cursor.o )
+[12 of 17] Compiling Graphics.Blank.Generated ( Graphics/Blank/Generated.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Generated.o )
+[13 of 17] Compiling Graphics.Blank.Font ( Graphics/Blank/Font.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Font.o )
+[14 of 17] Compiling Graphics.Blank.Style ( Graphics/Blank/Style.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Style.o )
+[15 of 17] Compiling Graphics.Blank.Utils ( Graphics/Blank/Utils.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/Utils.o )
+[16 of 17] Compiling Graphics.Blank   ( Graphics/Blank.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank.o )
+[17 of 17] Compiling Graphics.Blank.GHCi ( Graphics/Blank/GHCi.hs, dist/dist-sandbox-313a269c/build/Graphics/Blank/GHCi.o )
+Creating package registration file:
+/tmp/pkgConf-blank-canvas-01529195746392035568.6
+Installing library in
+/home/neuromancer/Projects/Sokoban/.cabal-sandbox/lib/x86_64-linux-ghc-8.0.2/blank-canvas-0.6-BBiGFd1w42KKxy5FrU15YF
+Registering blank-canvas-0.6...
+cabal: Leaving directory '/tmp/cabal-tmp-32073/blank-canvas-0.6'

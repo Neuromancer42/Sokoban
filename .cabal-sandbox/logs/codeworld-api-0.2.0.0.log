@@ -1,0 +1,15 @@
+cabal: Entering directory '/tmp/cabal-tmp-32073/codeworld-api-0.2.0.0'
+Configuring codeworld-api-0.2.0.0...
+Building codeworld-api-0.2.0.0...
+Preprocessing library codeworld-api-0.2.0.0...
+[1 of 5] Compiling CodeWorld.Color  ( src/CodeWorld/Color.hs, dist/dist-sandbox-313a269c/build/CodeWorld/Color.o )
+[2 of 5] Compiling CodeWorld.Picture ( src/CodeWorld/Picture.hs, dist/dist-sandbox-313a269c/build/CodeWorld/Picture.o )
+[3 of 5] Compiling CodeWorld.Event  ( src/CodeWorld/Event.hs, dist/dist-sandbox-313a269c/build/CodeWorld/Event.o )
+[4 of 5] Compiling CodeWorld.Driver ( src/CodeWorld/Driver.hs, dist/dist-sandbox-313a269c/build/CodeWorld/Driver.o )
+[5 of 5] Compiling CodeWorld        ( src/CodeWorld.hs, dist/dist-sandbox-313a269c/build/CodeWorld.o )
+Creating package registration file:
+/tmp/pkgConf-codeworld-api-0.2.08890233111494613810.0
+Installing library in
+/home/neuromancer/Projects/Sokoban/.cabal-sandbox/lib/x86_64-linux-ghc-8.0.2/codeworld-api-0.2.0.0-HZipaQILj593vOrut947ne
+Registering codeworld-api-0.2.0.0...
+cabal: Leaving directory '/tmp/cabal-tmp-32073/codeworld-api-0.2.0.0'

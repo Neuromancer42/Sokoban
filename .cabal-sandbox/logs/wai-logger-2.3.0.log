@@ -1,0 +1,14 @@
+cabal: Entering directory '/tmp/cabal-tmp-32075/wai-logger-2.3.0'
+Configuring wai-logger-2.3.0...
+Building wai-logger-2.3.0...
+Preprocessing library wai-logger-2.3.0...
+[1 of 4] Compiling Network.Wai.Logger.IP ( Network/Wai/Logger/IP.hs, dist/dist-sandbox-313a269c/build/Network/Wai/Logger/IP.o )
+[2 of 4] Compiling Network.Wai.Logger.IORef ( Network/Wai/Logger/IORef.hs, dist/dist-sandbox-313a269c/build/Network/Wai/Logger/IORef.o )
+[3 of 4] Compiling Network.Wai.Logger.Apache ( Network/Wai/Logger/Apache.hs, dist/dist-sandbox-313a269c/build/Network/Wai/Logger/Apache.o )
+[4 of 4] Compiling Network.Wai.Logger ( Network/Wai/Logger.hs, dist/dist-sandbox-313a269c/build/Network/Wai/Logger.o )
+Creating package registration file:
+/tmp/pkgConf-wai-logger-2.31395235128532670688.0
+Installing library in
+/home/neuromancer/Projects/Sokoban/.cabal-sandbox/lib/x86_64-linux-ghc-8.0.2/wai-logger-2.3.0-3DbVDVFGo2aUn1JJ9Af4
+Registering wai-logger-2.3.0...
+cabal: Leaving directory '/tmp/cabal-tmp-32075/wai-logger-2.3.0'
