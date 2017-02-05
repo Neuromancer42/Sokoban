@@ -37,9 +37,11 @@ maze x y
 pictureOfMaze :: Picture
 pictureOfMaze = putCol (-10)
   where
+    putCol :: Integer -> Picture
     putCol x
       | x == 11 = blank
       | otherwise = putBlock x (-10) & putCol (x + 1)
+    putBlock :: Integer -> Integer -> Picture
     putBlock x y
       | y == 11 = blank
       | otherwise =
