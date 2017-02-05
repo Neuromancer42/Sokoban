@@ -35,13 +35,15 @@ maze x y
   | otherwise = 2
 
 pictureOfMaze :: Picture
-pictureOfMaze = putBlock (-10) (-10)
+pictureOfMaze = putCol (-10)
   where
+    putCol x
+      | x == 11 = blank
+      | otherwise = putBlock x (-10) & putCol (x + 1)
     putBlock x y
-      | x == 11 && y == 10 = blank
-      | x == 11 = putBlock (-10) (y + 1)
+      | y == 11 = blank
       | otherwise =
-        translated (fromInteger x) (fromInteger y) (drawTile (maze x y)) & putBlock (x + 1) y
+        translated (fromInteger x) (fromInteger y) (drawTile (maze x y)) & putBlock x  (y + 1)
 
 main :: IO ()
 main = drawingOf pictureOfMaze
