@@ -20,7 +20,7 @@ ground :: Picture
 ground = colored (dark yellow) (cube 1)
 
 storage :: Picture
-storage = solidCircle 0.2 & ground
+storage = colored white (solidCircle 0.2) & ground
 
 box :: Picture
 box = colored (dark brown) (cube 0.9) & ground
@@ -49,7 +49,7 @@ pictureOfMaze = putCol (-10)
       | x == 11 = blank
       | otherwise = putBlock (C x (-10)) & putCol (x + 1)
     putBlock :: Coord -> Picture
-    putBlock c@(C x y)
+    putBlock c@(C _ y)
       | y == 11 = blank
       | otherwise = atCoord c (drawTile (maze c)) & putBlock (adjacentCoord U c)
 
@@ -62,9 +62,6 @@ data Direction
 data Coord =
   C Integer
     Integer
-
-initialCoord :: Coord
-initialCoord = C 0 0
 
 atCoord :: Coord -> Picture -> Picture
 atCoord (C x y) = translated (fromInteger x) (fromInteger y)
@@ -99,15 +96,49 @@ player D =
   where
     cranium = circle 0.18
 
+initialState :: State
+initialState = State (C 0 (-1)) R
+
 main :: IO ()
---main = interactionOf initialCoord handleTime handleEvent drawState
-main = drawingOf (player U & pictureOfMaze)
+main = resetableInteractionOf initialState handleTime handleEvent drawState
 
-handleTime :: Double -> Coord -> Coord
-handleTime _ c = c -- TODO
+resetableInteractionOf :: world
+                       -> (Double -> world -> world)
+                       -> (Event -> world -> world)
+                       -> (world -> Picture)
+                       -> IO ()
+resetableInteractionOf state0 timer handle draw = interactionOf state0 timer handle' draw
+  where
+    handle' (KeyPress key) _
+      | key == "Esc" = state0
+    handle' e s = handle e s
 
-handleEvent :: Event -> Coord -> Coord
-handleEvent _ _ = initialCoord -- TODO
+data State =
+  State Coord
+        Direction
 
-drawState :: Coord -> Picture
-drawState _ = blank -- TODO
+handleTime :: Double -> world -> world
+handleTime _ s = s
+
+handleEvent :: Event -> State -> State
+handleEvent (KeyPress key) (State c _)
+  | key == "Right" = State (tryStep c R) R
+  | key == "Left" = State (tryStep c L) L
+  | key == "Up" = State (tryStep c U) U
+  | key == "Down" = State (tryStep c D) D
+handleEvent _ s = s
+
+tryStep :: Coord -> Direction -> Coord
+tryStep cur dir
+  | isOk (maze next) = next
+  | otherwise = cur
+  where
+    next :: Coord
+    next = adjacentCoord dir cur
+    isOk :: Tile -> Bool
+    isOk Ground = True
+    isOk Storage = True
+    isOk _ = False
+
+drawState :: State -> Picture
+drawState (State pos dir) = atCoord pos (player dir) & pictureOfMaze
