@@ -75,8 +75,33 @@ adjacentCoord L (C x y) = C (x - 1) y
 adjacentCoord U (C x y) = C x (y + 1)
 adjacentCoord D (C x y) = C x (y - 1)
 
+player :: Direction -> Picture
+player R =
+  translated 0 0.3 cranium & path [(0, 0), (0.3, 0.05)] & path [(0, 0), (0.3, -0.05)] &
+  path [(0, -0.2), (0, 0.1)] &
+  path [(0, -0.2), (0.1, -0.5)] &
+  path [(0, -0.2), (-0.1, -0.5)]
+  where
+    cranium = circle 0.18 & sector (7 / 6 * pi) (1 / 6 * pi) 0.18
+player L = scaled (-1) 1 (player R)
+player U =
+  translated 0 0.3 cranium & path [(0, 0), (0.3, 0.05)] & path [(0, 0), (-0.3, 0.05)] &
+  path [(0, -0.2), (0, 0.1)] &
+  path [(0, -0.2), (0.1, -0.5)] &
+  path [(0, -0.2), (-0.1, -0.5)]
+  where
+    cranium = solidCircle 0.18
+player D =
+  translated 0 0.3 cranium & path [(0, 0), (0.3, -0.05)] & path [(0, 0), (-0.3, -0.05)] &
+  path [(0, -0.2), (0, 0.1)] &
+  path [(0, -0.2), (0.1, -0.5)] &
+  path [(0, -0.2), (-0.1, -0.5)]
+  where
+    cranium = circle 0.18
+
 main :: IO ()
-main = interactionOf initialCoord handleTime handleEvent drawState
+--main = interactionOf initialCoord handleTime handleEvent drawState
+main = drawingOf (player U & pictureOfMaze)
 
 handleTime :: Double -> Coord -> Coord
 handleTime _ c = c -- TODO
