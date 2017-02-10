@@ -23,7 +23,7 @@ storage :: Picture
 storage = colored white (solidCircle 0.2) & ground
 
 box :: Picture
-box = colored (dark brown) (cube 0.9) & ground
+box = colored (dark brown) (cube 0.9)
 
 drawTile :: Tile -> Picture
 drawTile Wall = wall
@@ -48,7 +48,7 @@ pictureOfBoxes = combine . mapList drawBox
     drawBox :: Coord -> Picture
     drawBox c =
       case noBoxMaze c of
-        Storage -> colored (light brown) (drawTile Box)
+        Storage -> atCoord c $ colored (light brown) (drawTile Box)
         _ -> atCoord c (drawTile Box)
 
 combine :: List Picture -> Picture
@@ -197,8 +197,8 @@ handleEvent _ = id
 
 go :: Direction -> State -> State
 go d s@(State c _ boxList)
+  | isPush nextCoord curMaze = State nextCoord d (makeNewList nextCoord d boxList)
   | isMove nextCoord curMaze = State nextCoord d boxList
-  | isPush nextCoord curMaze = State nextCoord d (makeNewList c d boxList)
   | otherwise = s
   where
     nextCoord = adjacentCoord d c
@@ -236,3 +236,4 @@ basicInteraction = Interaction initialState (\_ s -> s) handleEvent drawState
 
 main :: IO ()
 main = (runInteractionOf . resetable . withStartScreen) basicInteraction
+-- main = drawingOf ((\(State c d boxList) -> (atCoord c (player d)) & pictureOfBoxes boxList) initialState)
