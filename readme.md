@@ -13,3 +13,9 @@ cabal exec -- runghc sokoban.hs
 [CodeWorld][1]
 
 [1]: https://code.world/run.html?mode=haskell&dhash=D_6FfdGCInzAWXIHxVOL-1Q
+
+---
+
+## TODO
+1. add more maps
+2. implement File IO, convert files into maps (actually, the map here is a function Coord →- Tile)
