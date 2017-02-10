@@ -42,19 +42,18 @@ mapList :: (a -> b) -> List a -> List b
 mapList _ Empty = Empty
 mapList f (Entry c cs) = Entry (f c) (mapList f cs)
 
-drawFirstBox :: List Coord -> Picture
-drawFirstBox Empty = blank
-drawFirstBox (Entry c _) = atCoord c (drawTile Box)
-
 pictureOfBoxes :: List Coord -> Picture
-pictureOfBoxes = combine . mapList (`atCoord` drawTile Box)
+pictureOfBoxes = combine . mapList drawBox
+  where
+    drawBox :: Coord -> Picture
+    drawBox c =
+      case noBoxMaze c of
+        Storage -> colored (light brown) (drawTile Box)
+        _ -> atCoord c (drawTile Box)
 
 combine :: List Picture -> Picture
 combine Empty = blank
 combine (Entry p ps) = p & combine ps
-
-listOfBoxes :: List Coord
-listOfBoxes = Entry (C (-2) 0) (Entry (C (-1) 0) (Entry (C 0 0) (Entry (C 1 0) Empty)))
 
 pictureOfMaze :: Picture
 pictureOfMaze = putCol (-10)
@@ -66,7 +65,7 @@ pictureOfMaze = putCol (-10)
     putBlock :: Coord -> Picture
     putBlock c@(C _ y)
       | y == 11 = blank
-      | otherwise = atCoord c (drawTile (maze c)) & putBlock (adjacentCoord U c)
+      | otherwise = atCoord c (drawTile (noBoxMaze c)) & putBlock (adjacentCoord U c)
 
 maze :: Coord -> Tile
 maze (C x y)
@@ -78,11 +77,28 @@ maze (C x y)
   | otherwise = Ground
 
 noBoxMaze :: Coord -> Tile
-noBoxMaze c = case maze c of
-                  Box -> Ground
-                  t   -> t
+noBoxMaze c =
+  case maze c of
+    Box -> Ground
+    t -> t
 
+initialState :: State
+initialState = State (C 0 (-1)) D (initialBoxes maze)
 
+initialBoxes :: (Coord -> Tile) -> List Coord
+initialBoxes maze' = scan maze' upleft
+  where
+    upleft :: Coord
+    upleft = C (-10) (-10)
+    scan :: (Coord -> Tile) -> Coord -> List Coord
+    scan _ (C _ 11) = Empty
+    scan maze'' c =
+      case maze'' c of
+        Box -> Entry c (scan maze'' (next c))
+        _ -> scan maze'' (next c)
+    next :: Coord -> Coord
+    next (C 11 y) = C (-10) (y + 1)
+    next (C x y) = C (x + 1) y
 
 -- Movements and Coordination
 data Direction
@@ -94,6 +110,7 @@ data Direction
 data Coord =
   C Integer
     Integer
+  deriving (Eq)
 
 atCoord :: Coord -> Picture -> Picture
 atCoord (C x y) = translated (fromInteger x) (fromInteger y)
@@ -129,12 +146,10 @@ player D =
     cranium = circle 0.18
 
 -- State and Interaction
-initialState :: State
-initialState = State (C 0 (-1)) R
-
 data State =
   State Coord
         Direction
+        (List Coord)
 
 data SSState world
   = StartScreen
@@ -173,27 +188,48 @@ runInteractionOf :: Interaction s -> IO ()
 runInteractionOf (Interaction state0 timer handle draw) = interactionOf state0 timer handle draw
 
 handleEvent :: Event -> State -> State
-handleEvent (KeyPress key) (State c _)
-  | key == "Right" = State (tryStep c R) R
-  | key == "Left" = State (tryStep c L) L
-  | key == "Up" = State (tryStep c U) U
-  | key == "Down" = State (tryStep c D) D
-handleEvent _ s = s
+handleEvent (KeyPress key)
+  | key == "Right" = go R
+  | key == "Left" = go L
+  | key == "Up" = go U
+  | key == "Down" = go D
+handleEvent _ = id
 
-tryStep :: Coord -> Direction -> Coord
-tryStep cur dir
-  | isOk (maze next) = next
-  | otherwise = cur
+go :: Direction -> State -> State
+go d s@(State c _ boxList)
+  | isMove nextCoord curMaze = State nextCoord d boxList
+  | isPush nextCoord curMaze = State nextCoord d (makeNewList c d boxList)
+  | otherwise = s
   where
-    next :: Coord
-    next = adjacentCoord dir cur
-    isOk :: Tile -> Bool
-    isOk Ground = True
-    isOk Storage = True
-    isOk _ = False
+    nextCoord = adjacentCoord d c
+    curMaze = makeMaze noBoxMaze boxList
+      where
+        makeMaze :: (Coord -> Tile) -> List Coord -> Coord -> Tile
+        makeMaze mz Empty pos = mz pos
+        makeMaze mz (Entry c' cs) pos
+          | pos == c' = Box
+          | otherwise = makeMaze mz cs pos
+    isMove :: Coord -> (Coord -> Tile) -> Bool
+    isMove c' mz =
+      case mz c' of
+        Ground -> True
+        Storage -> True
+        _ -> False
+    isPush :: Coord -> (Coord -> Tile) -> Bool
+    isPush c' mz =
+      case (mz c', mz (adjacentCoord d c')) of
+        (Box, Ground) -> True
+        (Box, Storage) -> True
+        _ -> False
+    makeNewList :: Coord -> Direction -> List Coord -> List Coord
+    makeNewList _ _ Empty = Empty
+    makeNewList pos d' (Entry c' cs)
+      | pos == c' = Entry (adjacentCoord d' c') cs
+      | otherwise = Entry c' (makeNewList pos d' cs)
 
 drawState :: State -> Picture
-drawState (State pos dir) = atCoord pos (player dir) & pictureOfMaze
+drawState (State pos dir boxList) =
+  atCoord pos (player dir) & pictureOfBoxes boxList & pictureOfMaze
 
 basicInteraction :: Interaction State
 basicInteraction = Interaction initialState (\_ s -> s) handleEvent drawState
