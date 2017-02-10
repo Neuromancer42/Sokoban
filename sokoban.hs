@@ -1,8 +1,8 @@
--- basic blocks of sokoban
 {-# LANGUAGE OverloadedStrings #-}
 
 import CodeWorld
 
+-- basic blocks
 data Tile
   = Wall
   | Ground
@@ -32,14 +32,29 @@ drawTile Storage = storage
 drawTile Box = box
 drawTile Blank = blank
 
-maze :: Coord -> Tile
-maze (C x y)
-  | abs x > 4 || abs y > 4 = Blank
-  | abs x == 4 || abs y == 4 = Wall
-  | x == 2 && y <= 0 = Wall
-  | x == 3 && y <= 0 = Storage
-  | x >= -2 && y == 0 = Box
-  | otherwise = Ground
+-- Maze Construct
+data List a
+  = Empty
+  | Entry a
+          (List a)
+
+mapList :: (a -> b) -> List a -> List b
+mapList _ Empty = Empty
+mapList f (Entry c cs) = Entry (f c) (mapList f cs)
+
+drawFirstBox :: List Coord -> Picture
+drawFirstBox Empty = blank
+drawFirstBox (Entry c _) = atCoord c (drawTile Box)
+
+pictureOfBoxes :: List Coord -> Picture
+pictureOfBoxes = combine . mapList (`atCoord` drawTile Box)
+
+combine :: List Picture -> Picture
+combine Empty = blank
+combine (Entry p ps) = p & combine ps
+
+listOfBoxes :: List Coord
+listOfBoxes = Entry (C (-2) 0) (Entry (C (-1) 0) (Entry (C 0 0) (Entry (C 1 0) Empty)))
 
 pictureOfMaze :: Picture
 pictureOfMaze = putCol (-10)
@@ -53,6 +68,23 @@ pictureOfMaze = putCol (-10)
       | y == 11 = blank
       | otherwise = atCoord c (drawTile (maze c)) & putBlock (adjacentCoord U c)
 
+maze :: Coord -> Tile
+maze (C x y)
+  | abs x > 4 || abs y > 4 = Blank
+  | abs x == 4 || abs y == 4 = Wall
+  | x == 2 && y <= 0 = Wall
+  | x == 3 && y <= 0 = Storage
+  | x >= -2 && y == 0 = Box
+  | otherwise = Ground
+
+noBoxMaze :: Coord -> Tile
+noBoxMaze c = case maze c of
+                  Box -> Ground
+                  t   -> t
+
+
+
+-- Movements and Coordination
 data Direction
   = R
   | L
@@ -96,6 +128,7 @@ player D =
   where
     cranium = circle 0.18
 
+-- State and Interaction
 initialState :: State
 initialState = State (C 0 (-1)) R
 
