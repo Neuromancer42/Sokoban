@@ -99,26 +99,45 @@ player D =
 initialState :: State
 initialState = State (C 0 (-1)) R
 
-main :: IO ()
-main = resetableInteractionOf initialState handleTime handleEvent drawState
+data State =
+  State Coord
+        Direction
 
-resetableInteractionOf :: world
-                       -> (Double -> world -> world)
-                       -> (Event -> world -> world)
-                       -> (world -> Picture)
-                       -> IO ()
-resetableInteractionOf state0 timer handle draw = interactionOf state0 timer handle' draw
+data SSState world
+  = StartScreen
+  | Running world
+
+startScreen :: Picture
+startScreen = scaled 3 3 (text "Sokoban!")
+
+data Interaction world =
+  Interaction world
+              (Double -> world -> world)
+              (Event -> world -> world)
+              (world -> Picture)
+
+resetable :: Interaction s -> Interaction s
+resetable (Interaction state0 timer handle draw) = Interaction state0 timer handle' draw
   where
     handle' (KeyPress key) _
       | key == "Esc" = state0
     handle' e s = handle e s
 
-data State =
-  State Coord
-        Direction
+withStartScreen :: Interaction s -> Interaction (SSState s)
+withStartScreen (Interaction state0 timer handle draw) = Interaction state0' timer' handle' draw'
+  where
+    state0' = StartScreen
+    timer' _ StartScreen = StartScreen
+    timer' t (Running s) = Running (timer t s)
+    handle' (KeyPress key) StartScreen
+      | key == " " = Running state0
+    handle' _ StartScreen = StartScreen
+    handle' k (Running s) = Running (handle k s)
+    draw' StartScreen = startScreen
+    draw' (Running s) = draw s
 
-handleTime :: Double -> world -> world
-handleTime _ s = s
+runInteractionOf :: Interaction s -> IO ()
+runInteractionOf (Interaction state0 timer handle draw) = interactionOf state0 timer handle draw
 
 handleEvent :: Event -> State -> State
 handleEvent (KeyPress key) (State c _)
@@ -142,3 +161,9 @@ tryStep cur dir
 
 drawState :: State -> Picture
 drawState (State pos dir) = atCoord pos (player dir) & pictureOfMaze
+
+basicInteraction :: Interaction State
+basicInteraction = Interaction initialState (\_ s -> s) handleEvent drawState
+
+main :: IO ()
+main = (runInteractionOf . resetable . withStartScreen) basicInteraction
