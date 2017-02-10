@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import CodeWorld
+import Data.Text
 
 -- basic blocks
 data Tile
@@ -169,7 +170,7 @@ winning = allList . mapList isOnStorage
     allList (Entry x xs) = x && allList xs
 
 startScreen :: Picture
-startScreen = scaled 3 3 (text "Sokoban!")
+startScreen = scaled 3 3 (text "Sokoban!") & hint "Press SPACE to start"
 
 data Interaction world =
   Interaction world
@@ -201,7 +202,8 @@ runInteractionOf :: Interaction s -> IO ()
 runInteractionOf (Interaction state0 timer handle draw) = interactionOf state0 timer handle draw
 
 handleEvent :: Event -> State -> State
-handleEvent _ s@(State _ _ boxList) | winning boxList = s
+handleEvent _ s@(State _ _ boxList)
+  | winning boxList = s
 handleEvent (KeyPress key) s
   | key == "Right" = go R s
   | key == "Left" = go L s
@@ -247,7 +249,8 @@ drawState (State pos dir boxList) =
   where
     winPhase =
       if winning boxList
-        then scaled 3 3 (text "Winning!") & colored (translucent (gray 0.5)) (cube 21)
+        then hint "Press ESC to restart" & scaled 3 3 (text "Winning!") &
+             colored (translucent (gray 0.5)) (cube 21)
         else blank
 
 basicInteraction :: Interaction State
@@ -255,4 +258,6 @@ basicInteraction = Interaction initialState (\_ s -> s) handleEvent drawState
 
 main :: IO ()
 main = (runInteractionOf . resetable . withStartScreen) basicInteraction
--- main = drawingOf ((\(State c d boxList) -> (atCoord c (player d)) & pictureOfBoxes boxList) initialState)
+
+hint :: Text -> Picture
+hint t = translated 0 (-5) (text t)
