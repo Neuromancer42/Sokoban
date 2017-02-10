@@ -47,9 +47,15 @@ pictureOfBoxes = combine . mapList drawBox
   where
     drawBox :: Coord -> Picture
     drawBox c =
-      case noBoxMaze c of
-        Storage -> atCoord c $ colored (light brown) (drawTile Box)
-        _ -> atCoord c (drawTile Box)
+      if isOnStorage c
+        then atCoord c $ colored (light brown) (drawTile Box)
+        else atCoord c (drawTile Box)
+
+isOnStorage :: Coord -> Bool
+isOnStorage c =
+  case noBoxMaze c of
+    Storage -> True
+    _ -> False
 
 combine :: List Picture -> Picture
 combine Empty = blank
@@ -155,6 +161,13 @@ data SSState world
   = StartScreen
   | Running world
 
+winning :: List Coord -> Bool
+winning = allList . mapList isOnStorage
+  where
+    allList :: List Bool -> Bool
+    allList Empty = True
+    allList (Entry x xs) = x && allList xs
+
 startScreen :: Picture
 startScreen = scaled 3 3 (text "Sokoban!")
 
@@ -188,12 +201,13 @@ runInteractionOf :: Interaction s -> IO ()
 runInteractionOf (Interaction state0 timer handle draw) = interactionOf state0 timer handle draw
 
 handleEvent :: Event -> State -> State
-handleEvent (KeyPress key)
-  | key == "Right" = go R
-  | key == "Left" = go L
-  | key == "Up" = go U
-  | key == "Down" = go D
-handleEvent _ = id
+handleEvent _ s@(State _ _ boxList) | winning boxList = s
+handleEvent (KeyPress key) s
+  | key == "Right" = go R s
+  | key == "Left" = go L s
+  | key == "Up" = go U s
+  | key == "Down" = go D s
+handleEvent _ s = s
 
 go :: Direction -> State -> State
 go d s@(State c _ boxList)
@@ -229,7 +243,12 @@ go d s@(State c _ boxList)
 
 drawState :: State -> Picture
 drawState (State pos dir boxList) =
-  atCoord pos (player dir) & pictureOfBoxes boxList & pictureOfMaze
+  winPhase & atCoord pos (player dir) & pictureOfBoxes boxList & pictureOfMaze
+  where
+    winPhase =
+      if winning boxList
+        then scaled 3 3 (text "Winning!") & colored (translucent (gray 0.5)) (cube 21)
+        else blank
 
 basicInteraction :: Interaction State
 basicInteraction = Interaction initialState (\_ s -> s) handleEvent drawState
