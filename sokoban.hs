@@ -10,6 +10,7 @@ data Tile
   | Storage
   | Box
   | Blank
+  | Player
 
 cube :: Double -> Picture
 cube a = solidRectangle a a
@@ -30,8 +31,9 @@ drawTile :: Tile -> Picture
 drawTile Wall = wall
 drawTile Ground = ground
 drawTile Storage = storage
-drawTile Box = box
+drawTile Box = box & ground
 drawTile Blank = blank
+drawTile Player = player D & ground
 
 -- Maze Construct
 data List a
@@ -39,22 +41,25 @@ data List a
   | Entry a
           (List a)
 
+newtype Maze =
+  Maze (Coord -> Tile)
+
 mapList :: (a -> b) -> List a -> List b
 mapList _ Empty = Empty
 mapList f (Entry c cs) = Entry (f c) (mapList f cs)
 
-pictureOfBoxes :: List Coord -> Picture
-pictureOfBoxes = combine . mapList drawBox
+pictureOfBoxes :: Maze -> List Coord -> Picture
+pictureOfBoxes mz = combine . mapList drawBox
   where
     drawBox :: Coord -> Picture
     drawBox c =
-      if isOnStorage c
+      if isOnStorage mz c
         then atCoord c $ colored (light brown) (drawTile Box)
         else atCoord c (drawTile Box)
 
-isOnStorage :: Coord -> Bool
-isOnStorage c =
-  case noBoxMaze c of
+isOnStorage :: Maze -> Coord -> Bool
+isOnStorage (Maze mz) c =
+  case mz c of
     Storage -> True
     _ -> False
 
@@ -62,8 +67,8 @@ combine :: List Picture -> Picture
 combine Empty = blank
 combine (Entry p ps) = p & combine ps
 
-pictureOfMaze :: Picture
-pictureOfMaze = putCol (-10)
+pictureOfMaze :: Maze -> Picture
+pictureOfMaze (Maze noBox) = putCol (-10)
   where
     putCol :: Integer -> Picture
     putCol x
@@ -72,40 +77,56 @@ pictureOfMaze = putCol (-10)
     putBlock :: Coord -> Picture
     putBlock c@(C _ y)
       | y == 11 = blank
-      | otherwise = atCoord c (drawTile (noBoxMaze c)) & putBlock (adjacentCoord U c)
+      | otherwise = atCoord c (drawTile (noBox c)) & putBlock (adjacentCoord U c)
+    putBlock Nowhere = blank
 
 maze :: Coord -> Tile
 maze (C x y)
+  | x == 0 && y == -1 = Player
   | abs x > 4 || abs y > 4 = Blank
   | abs x == 4 || abs y == 4 = Wall
   | x == 2 && y <= 0 = Wall
   | x == 3 && y <= 0 = Storage
   | x >= -2 && y == 0 = Box
   | otherwise = Ground
+maze Nowhere = Blank
 
-noBoxMaze :: Coord -> Tile
-noBoxMaze c =
-  case maze c of
-    Box -> Ground
-    t -> t
-
-initialState :: State
-initialState = State (C 0 (-1)) D (initialBoxes maze)
-
-initialBoxes :: (Coord -> Tile) -> List Coord
-initialBoxes maze' = scan maze' upleft
+noBoxMaze :: Maze -> Maze
+noBoxMaze (Maze mz) = Maze mz'
   where
-    upleft :: Coord
-    upleft = C (-10) (-10)
-    scan :: (Coord -> Tile) -> Coord -> List Coord
-    scan _ (C _ 11) = Empty
-    scan maze'' c =
-      case maze'' c of
-        Box -> Entry c (scan maze'' (next c))
-        _ -> scan maze'' (next c)
+    mz' c =
+      case mz c of
+        Box -> Ground
+        Player -> Ground
+        t -> t
+
+initialState :: Maze -> State
+initialState (Maze raw) = State initialPostion D initialBoxes
+  where
+    initialBoxes :: List Coord
+    initialBoxes = scan raw upleft
+      where
+        scan :: (Coord -> Tile) -> Coord -> List Coord
+        scan _ (C _ 11) = Empty
+        scan maze' c =
+          case maze' c of
+            Box -> Entry c (scan maze' (next c))
+            _ -> scan maze' (next c)
+    initialPostion :: Coord
+    initialPostion = scan1 raw upleft
+      where
+        scan1 :: (Coord -> Tile) -> Coord -> Coord
+        scan1 _ (C _ 11) = Nowhere
+        scan1 maze' c =
+          case maze' c of
+            Player -> c
+            _ -> scan1 maze' (next c)
     next :: Coord -> Coord
     next (C 11 y) = C (-10) (y + 1)
     next (C x y) = C (x + 1) y
+    next Nowhere = Nowhere
+    upleft :: Coord
+    upleft = C (-10) (-10)
 
 -- Movements and Coordination
 data Direction
@@ -114,19 +135,22 @@ data Direction
   | U
   | D
 
-data Coord =
-  C Integer
-    Integer
+data Coord
+  = C Integer
+      Integer
+  | Nowhere
   deriving (Eq)
 
 atCoord :: Coord -> Picture -> Picture
-atCoord (C x y) = translated (fromInteger x) (fromInteger y)
+atCoord (C x y) p = translated (fromInteger x) (fromInteger y) p
+atCoord Nowhere _ = blank
 
 adjacentCoord :: Direction -> Coord -> Coord
 adjacentCoord R (C x y) = C (x + 1) y
 adjacentCoord L (C x y) = C (x - 1) y
 adjacentCoord U (C x y) = C x (y + 1)
 adjacentCoord D (C x y) = C x (y - 1)
+adjacentCoord _ Nowhere = Nowhere
 
 player :: Direction -> Picture
 player R =
@@ -162,8 +186,8 @@ data SSState world
   = StartScreen
   | Running world
 
-winning :: List Coord -> Bool
-winning = allList . mapList isOnStorage
+winning :: Maze -> List Coord -> Bool
+winning m = allList . mapList (isOnStorage m)
   where
     allList :: List Bool -> Bool
     allList Empty = True
@@ -201,39 +225,39 @@ withStartScreen (Interaction state0 timer handle draw) = Interaction state0' tim
 runInteractionOf :: Interaction s -> IO ()
 runInteractionOf (Interaction state0 timer handle draw) = interactionOf state0 timer handle draw
 
-handleEvent :: Event -> State -> State
-handleEvent _ s@(State _ _ boxList)
-  | winning boxList = s
-handleEvent (KeyPress key) s
-  | key == "Right" = go R s
-  | key == "Left" = go L s
-  | key == "Up" = go U s
-  | key == "Down" = go D s
-handleEvent _ s = s
+handleEvent :: Maze -> Event -> State -> State
+handleEvent mz _ s@(State _ _ boxList)
+  | winning mz boxList = s
+handleEvent mz (KeyPress key) s
+  | key == "Right" = go mz R s
+  | key == "Left" = go mz L s
+  | key == "Up" = go mz U s
+  | key == "Down" = go mz D s
+handleEvent _ _ s = s
 
-go :: Direction -> State -> State
-go d s@(State c _ boxList)
+go :: Maze -> Direction -> State -> State
+go (Maze mz) d s@(State c _ boxList)
   | isPush nextCoord curMaze = State nextCoord d (makeNewList nextCoord d boxList)
   | isMove nextCoord curMaze = State nextCoord d boxList
   | otherwise = s
   where
     nextCoord = adjacentCoord d c
-    curMaze = makeMaze noBoxMaze boxList
+    curMaze = Maze (makeMaze mz boxList)
       where
         makeMaze :: (Coord -> Tile) -> List Coord -> Coord -> Tile
-        makeMaze mz Empty pos = mz pos
-        makeMaze mz (Entry c' cs) pos
+        makeMaze mz' Empty pos = mz' pos
+        makeMaze mz' (Entry c' cs) pos
           | pos == c' = Box
-          | otherwise = makeMaze mz cs pos
-    isMove :: Coord -> (Coord -> Tile) -> Bool
-    isMove c' mz =
-      case mz c' of
+          | otherwise = makeMaze mz' cs pos
+    isMove :: Coord -> Maze -> Bool
+    isMove c' (Maze cur) =
+      case cur c' of
         Ground -> True
         Storage -> True
         _ -> False
-    isPush :: Coord -> (Coord -> Tile) -> Bool
-    isPush c' mz =
-      case (mz c', mz (adjacentCoord d c')) of
+    isPush :: Coord -> Maze -> Bool
+    isPush c' (Maze cur) =
+      case (cur c', cur (adjacentCoord d c')) of
         (Box, Ground) -> True
         (Box, Storage) -> True
         _ -> False
@@ -243,21 +267,24 @@ go d s@(State c _ boxList)
       | pos == c' = Entry (adjacentCoord d' c') cs
       | otherwise = Entry c' (makeNewList pos d' cs)
 
-drawState :: State -> Picture
-drawState (State pos dir boxList) =
-  winPhase & atCoord pos (player dir) & pictureOfBoxes boxList & pictureOfMaze
+drawState :: Maze -> State -> Picture
+drawState m (State pos dir boxList) =
+  winPhase & atCoord pos (player dir) & pictureOfBoxes m boxList & pictureOfMaze m
   where
     winPhase =
-      if winning boxList
+      if winning m boxList
         then hint "Press ESC to restart" & scaled 3 3 (text "Winning!") &
              colored (translucent (gray 0.5)) (cube 21)
         else blank
 
-basicInteraction :: Interaction State
-basicInteraction = Interaction initialState (\_ s -> s) handleEvent drawState
+basicInteraction :: Maze -> Interaction State
+basicInteraction m =
+  Interaction (initialState m) (\_ s -> s) (handleEvent (noBoxMaze m)) (drawState (noBoxMaze m))
 
 main :: IO ()
-main = (runInteractionOf . resetable . withStartScreen) basicInteraction
+main =
+  let m = Maze maze
+  in (runInteractionOf . resetable . withStartScreen) (basicInteraction m)
 
 hint :: Text -> Picture
 hint t = translated 0 (-5) (text t)
