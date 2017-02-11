@@ -1,8 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import CodeWorld
-import Data.Text
 import Data.Maybe
+import Data.Text
 
 -- basic blocks
 data Tile
@@ -306,11 +306,10 @@ drawState (State pos dir boxList level) =
     m = noBoxMaze (nthMaze mazes level)
     winPhase =
       if winning m boxList
-        then hint "Press SPACE to continue" &
-             translated 0 (-1) (hint "or Press ESC to restart") &
-             scaled 3 3 (text "Winning!") &
+        then hint "Press SPACE to continue" & translated 0 (-1) (hint "or Press ESC to restart") &
+             scaled 3 3 (text (pack ("Phase " ++ show level ++ " Passed!"))) &
              colored (translucent (gray 0.5)) (cube 21)
-        else blank
+        else hint (pack ("Phase " ++ show level))
 
 basicInteraction :: Integer -> Interaction State
 basicInteraction m = Interaction (initialState m) (\_ s -> s) handleEvent drawState
