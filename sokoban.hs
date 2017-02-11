@@ -40,6 +40,7 @@ data List a
   = Empty
   | Entry a
           (List a)
+  deriving (Eq)
 
 newtype Maze =
   Maze (Coord -> Tile)
@@ -134,6 +135,7 @@ data Direction
   | L
   | U
   | D
+  deriving Eq
 
 data Coord
   = C Integer
@@ -181,6 +183,7 @@ data State =
   State Coord
         Direction
         (List Coord)
+  deriving (Eq)
 
 data SSState world
   = StartScreen
@@ -284,7 +287,31 @@ basicInteraction m =
 main :: IO ()
 main =
   let m = Maze maze
-  in (runInteractionOf . resetable . withStartScreen) (basicInteraction m)
+  in (runInteractionOf . resetable . withStartScreen . withUndo) (basicInteraction m)
 
 hint :: Text -> Picture
 hint t = translated 0 (-5) (text t)
+
+-- Undo
+data WithUndo a =
+  WithUndo a
+           (List a)
+
+withUndo
+  :: Eq a
+  => Interaction a -> Interaction (WithUndo a)
+withUndo (Interaction state0 timer handle draw) = Interaction state0' timer' handle' draw'
+  where
+    state0' = WithUndo state0 Empty
+    timer' t (WithUndo s stack) = WithUndo (timer t s) stack
+    handle' (KeyPress key) (WithUndo s stack)
+      | key == "U" =
+        case stack of
+          Entry s' stack' -> WithUndo s' stack'
+          Empty -> WithUndo s Empty
+    handle' e (WithUndo s stack)
+      | s' == s = WithUndo s stack
+      | otherwise = WithUndo s' (Entry s stack)
+      where
+        s' = handle e s
+    draw' (WithUndo s _) = draw s

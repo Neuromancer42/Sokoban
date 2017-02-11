@@ -2,6 +2,9 @@
 
 This is an interesting game. You can control the guy on the map using your direction keys ( ↑ ↓ ← → ). Help him **push** all the boxes onto the storage sites.
 
+Hints: If you make a wrong step, press "U" (uppercase) to undo one step or press "Esc" to restart
+
+
 ## How to run the this game
 1. If you have **cabal** on your computer, use the following command to start the program:
 ``
