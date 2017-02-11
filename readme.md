@@ -15,9 +15,7 @@ cabal exec -- runghc sokoban.hs
 2. If you do not have such tool, the following site is also available. \\
 [CodeWorld][1]
 
-[1]: https://code.world/run.html?mode=haskell&dhash=D_6FfdGCInzAWXIHxVOL-1Q
-
-
+[1]: https://code.world/run.html?mode=haskell&dhash=D049TCvBhJbYpJ-7omYwS6w
 
 ## TODO
 - [x] 1. add more maps
