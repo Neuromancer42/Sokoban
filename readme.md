@@ -20,5 +20,5 @@ cabal exec -- runghc sokoban.hs
 
 
 ## TODO
-1. add more maps
-2. implement File IO, convert files into maps (actually, the map here is a function Coord → Tile)
+- [x] 1. add more maps
+- [ ] 2. implement File IO, convert files into maps (actually, the map here is a function Coord → Tile)
